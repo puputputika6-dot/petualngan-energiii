@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan VR - Mengubah Bentuk Energi</title>
+    <!-- Library A-Frame untuk Virtual Reality berbasis Web -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        /* Overlay Instruksi untuk Pengguna */
+        #vr-instructions {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            z-index: 999;
+            text-align: center;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="vr-instructions">
+        🥽 <strong>Petualangan VR Energi</strong><br>
+        Arahkan lingkaran titik tengah (kursor) ke benda untuk melihat perubahan energinya!
+    </div>
+
+    <!-- ADEGAN VIRTUAL REALITY (A-FRAME SCENE) -->
+    <a-scene embedded style="height: 100vh; width: 100vw;">
+        
+        <!-- ASSETS / SUMBER DAYA -->
+        <a-assets>
+            <!-- Latar Belakang / Tekstur Ruangan -->
+            <img id="sky-texture" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/cubes.jpg">
+        </a-assets>
+
+        <!-- KETUA & KURSOR KAMERA (GAZE CONTROL UNTUK HP / CARD BOARD) -->
+        <a-entity id="rig" position="0 1.6 0">
+            <a-camera look-controls raycaster="objects: .clickable">
+                <!-- Kursor lingkaran di tengah layar -->
+                <a-cursor 
+                    id="cursor"
+                    animation__click="property: scale; startEvents: click; easing: easeInCubic; durability: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+                    animation__fusing="property: fusing; startEvents: fusing; easing: easeInCubic; durability: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
+                    event-set__mouseenter="_event: mouseenter; color: #fbbf24"
+                    event-set__mouseleave="_event: mouseleave; color: #ffffff"
+                    fuse="true" 
+                    fuse-timeout="1500"
+                    material="color: white; shader: flat"
+                    position="0 0 -1"
+                    geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03">
+                </a-cursor>
+            </a-camera>
+        </a-entity>
+
+        <!-- LANGIT 360 DERAJAT / RUANGAN -->
+        <a-sky color="#0f172a"></a-sky>
+
+        <!-- LANTAI RUANGAN -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#1e293b"></a-plane>
+
+        <!-- JUDUL RUANGAN VR -->
+        <a-text value="Laboratorium Perubahan Energi" position="0 3.5 -4" align="center" color="#60a5fa" width="6"></a-text>
+        <a-text value="Tatap/Klik objek di bawah ini!" position="0 3 -4" align="center" color="#ffffff" width="4"></a-text>
+
+
+        <!-- 1. OBJEK LAMPU (LISTRIK -> CAHAYA) -->
+        <a-group position="-2.5 1.5 -3">
+            <!-- Representasi Lampu (Bola Kuning) -->
+            <a-sphere class="clickable" radius="0.4" color="#fef08a" 
+                      animation="property: position; to: -2.5 1.7 -3; dir: alternate; loop: true; dur: 2000"
+                      onclick="showInfo('lampu-info')">
+            </a-sphere>
+            <a-cylinder position="0 -0.6 0" radius="0.1" height="0.8" color="#94a3b8"></a-cylinder>
+            <a-text value="💡 Lampu" position="0 -1.2 0" align="center" color="#ffffff" width="4"></a-text>
+            
+            <!-- Papan Informasi Tersembunyi (Tampil saat diklik) -->
+            <a-plane id="lampu-info" class="info-card" position="0 1 0" width="2.2" height="1" color="#1e3a8a" visible="false">
+                <a-text value="Lampu Belajar\n\nPerubahan Energi:\nEnergi Listrik -> Energi Cahaya" align="center" color="#ffffff" width="2" position="0 0 0.01"></a-text>
+            </a-plane>
+        </a-group>
+
+
+        <!-- 2. OBJEK KIPAS ANGIN (LISTRIK -> GERAK) -->
+        <a-group position="-0.8 1.5 -3">
+            <!-- Representasi Kipas (Kotak Berputar) -->
+            <a-box class="clickable" width="0.6" height="0.6" depth="0.2" color="#3b82f6"
+                   animation="property: rotation; to: 0 0 360; loop: true; dur: 1000; easing: linear"
+                   onclick="showInfo('kipas-info')">
+            </a-box>
+            <a-cylinder position="0 -0.6 0" radius="0.1" height="0.8" color="#94a3b8"></a-cylinder>
+            <a-text value="🌀 Kipas" position="0 -1.2 0" align="center" color="#ffffff" width="4"></a-text>
+
+            <a-plane id="kipas-info" class="info-card" position="0 1 0" width="2.2" height="1" color="#1e3a8a" visible="false">
+                <a-text value="Kipas Angin\n\nPerubahan Energi:\nEnergi Listrik -> Energi Gerak" align="center" color="#ffffff" width="2" position="0 0 0.01"></a-text>
+            </a-plane>
+        </a-group>
+
+
+        <!-- 3. OBJEK SPEAKER / PENGERAS SUARA (LISTRIK -> BUNYI) -->
+        <a-group position="0.8 1.5 -3">
+            <!-- Representasi Speaker -->
+            <a-box class="clickable" width="0.5" height="0.7" depth="0.4" color="#ef4444"
+                   animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 500"
+                   onclick="showInfo('speaker-info')">
+            </a-box>
+            <a-cylinder position="0 -0.6 0" radius="0.1" height="0.8" color="#94a3b8"></a-cylinder>
+            <a-text value="🔊 Speaker" position="0 -1.2 0" align="center" color="#ffffff" width="4"></a-text>
+
+            <a-plane id="speaker-info" class="info-card" position="0 1 0" width="2.2" height="1" color="#1e3a8a" visible="false">
+                <a-text value="Pengeras Suara\n\nPerubahan Energi:\nEnergi Listrik -> Energi Bunyi" align="center" color="#ffffff" width="2" position="0 0 0.01"></a-text>
+            </a-plane>
+        </a-group>
+
+
+        <!-- 4. OBJEK RICE COOKER (LISTRIK -> PANAS) -->
+        <a-group position="2.5 1.5 -3">
+            <!-- Representasi Rice Cooker -->
+            <a-cylinder class="clickable" radius="0.4" height="0.6" color="#f97316"
+                         onclick="showInfo('rice-info')">
+            </a-cylinder>
+            <a-cylinder position="0 -0.6 0" radius="0.1" height="0.8" color="#94a3b8"></a-cylinder>
+            <a-text value="🍚 Rice Cooker" position="0 -1.2 0" align="center" color="#ffffff" width="4"></a-text>
+
+            <a-plane id="rice-info" class="info-card" position="0 1 0" width="2.2" height="1" color="#1e3a8a" visible="false">
+                <a-text value="Penanak Nasi\n\nPerubahan Energi:\nEnergi Listrik -> Energi Panas" align="center" color="#ffffff" width="2" position="0 0 0.01"></a-text>
+            </a-plane>
+        </a-group>
+
+    </a-scene>
+
+    <!-- LOGIKA INTERAKSI KURSOR VR -->
+    <script>
+        function showInfo(infoId) {
+            // Sembunyikan semua info card terlebih dahulu
+            const allCards = document.querySelectorAll('.info-card');
+            allCards.forEach(card => card.setAttribute('visible', 'false'));
+
+            // Tampilkan info card dari objek yang ditatap/diklik
+            const selectedCard = document.getElementById(infoId);
+            if (selectedCard) {
+                selectedCard.setAttribute('visible', 'true');
+            }
+        }
+    </script>
+</body>
+</html>
+<!-- Tambahkan tombol ini di dalam dashboard atau menu utama di index.html -->
+<a href="vr-media.html" target="_blank" class="btn-primary" style="background: #8b5cf6; display: inline-block; text-align: center; text-decoration: none; margin-top: 10px;">
+    🥽 Masuk ke Ruang VR 360°
+</a>
